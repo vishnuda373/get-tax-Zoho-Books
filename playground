@@ -1,0 +1,40 @@
+void Books.ListTax()
+{
+	mp = Map();
+	org_id = xxxxxxx;
+	if(!isNull(org_id))
+	{
+		mm = Map();
+		ZohoBooksResponse = invokeurl
+		[
+			url :"https://books.zoho.com/api/v3/settings/taxes?organization_id=" + org_id
+			type :GET
+			parameters:mm
+			connection:"zoho_books"
+		];
+		data = ZohoBooksResponse.get("taxes");
+		// 		info data;
+		// 		info data.size();
+		for each  h in data
+		{
+			ft = TAX[Zoho_Books_ID == h.get("tax_id")].count(ID);
+			if(ft == 0)
+			{
+				insert into TAX
+				[
+					Added_User=zoho.loginuser
+					Tax_Name=ifnull(h.get("tax_name"),"")
+					Zoho_Books_ID=ifnull(h.get("tax_id"),"")
+					Tax_Rate=ifnull(h.get("tax_percentage"),"")
+				]
+			}
+			else
+			{
+				tx = TAX[Zoho_Books_ID == h.get("tax_id")];
+				tx.Tax_Name=ifnull(h.get("tax_name"),"");
+				tx.Zoho_Books_ID=h.get("tax_id");
+				//info ch.Account_Name ;
+			}
+		}
+	}
+}
